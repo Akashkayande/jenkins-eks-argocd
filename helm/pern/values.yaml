@@ -1,0 +1,92 @@
+namespace: pern-prod
+
+backend:
+  name: backend
+  replicaCount: 2
+
+  canary:
+    replicaCount: 2
+    name: backend-canary
+    tag: "3"
+
+  image:
+    repository: 407622020962.dkr.ecr.us-east-1.amazonaws.com/backend
+    tag: "2"
+    pullPolicy: IfNotPresent
+  
+  resources:
+    stable:
+      requests:
+        cpu: "200m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+
+    canary:
+      requests:
+        cpu: "200m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+
+  service:
+    type: ClusterIP
+    port: 5000 
+    targetPort: 3000
+
+  secrets:
+    PORT: "MzAwMA=="
+    DATABASE_URL: "cG9zdGdyZXNxbDovL25lb25kYl9vd25lcjpucGdfVWpGbWVQNkNYcU4zQGVwLXN3ZWV0LXJpY2UtYTh4YjNsOTYtcG9vbGVyLmVhc3R1czIuYXp1cmUubmVvbi50ZWNoL25lb25kYj9zc2xtb2RlPXJlcXVpcmUmY2hhbm5lbF9iaW5kaW5nPXJlcXVpcmU="
+    CLERK_PUBLISHABLE_KEY: "cGtfdGVzdF9kSEoxYzNScGJtY3RhbUY1WW1seVpDMDJOQzVqYkdWeWF5NWhZMk52ZFc1MGN5NWtaWFlr"
+    CLERK_SECRET_KEY: "c2tfdGVzdF8wYkZtZUtWSDdMWEhVOTVvUlc5ZjM1SG9mVmR3WExLenpaVFhQTWFQRXg="
+    GEMINI_API_KEY: "QUl6YVN5QzFHWVoxUTJEZlJBWDBsOGdvX3d0djc1STBLdW5SYmdB"
+    CLIPDROP_API_KEY: "NjNjM2Q0NjJjNzFlYjcwOWI1ZDAzZDY5MzBiYjk5ZDM3NjU1MDM4MzA3MWI4OTk0ZmIwMjU1OTk4MTVlMWY5NGZiMGQzNzJkZTZmMmM3MGI1ZWQ1NjBkOWVhNjdhMzlk"
+    CLOUDINARY_CLOUD_NAME: "ZGx0cWRhOHBh"
+    CLOUDINARY_API_KEY: "NTI4OTM5NzgxNzgxMjEx"
+    CLOUDINARY_API_SECRET: "eHgxSmsxSlhPSkVGUC02WlBkZG9OYi11VktF"
+
+frontend:
+  name: frontend
+  replicaCount: 2
+
+  canary:
+    replicaCount: 2
+    name: frontend-canary
+    tag: "3"
+
+  image:
+    repository: 407622020962.dkr.ecr.us-east-1.amazonaws.com/frontend
+    tag: "2"
+    pullPolicy: IfNotPresent
+
+
+  resources:
+    stable:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "250m"
+        memory: "256Mi"
+
+    canary:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "250m"
+        memory: "256Mi"
+
+  service:
+    type: ClusterIP
+    port: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  host: pern.example.com
+  paths:
+    frontend: /
+    backend: /api

@@ -1,0 +1,29 @@
+# Node dependencies
+node_modules
+
+# Vite build output (generated inside Docker)
+dist
+
+
+*.pem
+*.key
+
+# Git & CI
+.git
+.gitignore
+.github
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Logs
+npm-debug.log
+yarn-error.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docs
+*.md

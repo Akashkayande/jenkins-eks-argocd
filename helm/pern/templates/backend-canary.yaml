@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.backend.canary.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.backend.canary.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.backend.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.backend.name }}
+        track: canary
+    spec:
+      containers:
+        - name: backend
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.canary.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.backend.service.targetPort }}
+          resources:
+            requests:
+              cpu: {{ .Values.backend.resources.canary.requests.cpu }}
+              memory: {{ .Values.backend.resources.canary.requests.memory }}
+            limits:
+              cpu: {{ .Values.backend.resources.canary.limits.cpu }}
+              memory: {{ .Values.backend.resources.canary.limits.memory }}
+
+
+          envFrom:
+            - secretRef:
+                name: backend-secrets
+          
