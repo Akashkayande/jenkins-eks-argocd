@@ -76,7 +76,7 @@ pipeline {
     success {
       emailext(
         to: "${EMAIL_TO}",
-        subject: "✅ Canary Deployment Successful | Build #${BUILD_NUMBER}",
+        subject: "✅ Canary deployment triggered (Argo CD will sync)| Build #${BUILD_NUMBER}",
         body: """
         Hello Team,
 

@@ -1,5 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: {{ .Values.backend.name }}
   namespace: {{ .Values.namespace }}
@@ -12,7 +12,6 @@ spec:
     metadata:
       labels:
         app: {{ .Values.backend.name }}
-        track: stable
     spec:
       containers:
         - name: backend
@@ -30,3 +29,35 @@ spec:
           envFrom:
             - secretRef:
                 name: backend-secrets
+  strategy:
+    canary:
+      canaryService: backend-canary-service
+      stableService: backend-service
+      trafficRouting:
+        nginx:
+          stableIngress: pern-ingress
+
+      steps:
+        - setWeight: 20
+        - pause: { duration: 30s }
+        - analysis:
+            templates:
+              - templateName: backend-auto-rollback
+
+        - setWeight: 50
+        - pause: { duration: 60s }
+        - analysis:
+            templates:
+              - templateName: backend-auto-rollback
+
+        - setWeight: 80
+        - pause: { duration: 60s }
+        - analysis:
+            templates:
+              - templateName: backend-auto-rollback
+
+        - setWeight: 100
+        - analysis:
+            templates:
+              - templateName: backend-auto-rollback
+

@@ -1,5 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: {{ .Values.frontend.name }}
   namespace: {{ .Values.namespace }}
@@ -12,7 +12,6 @@ spec:
     metadata:
       labels:
         app: {{ .Values.frontend.name }}
-        track: stable
     spec:
       containers:
         - name: frontend
@@ -27,4 +26,36 @@ spec:
             limits:
               cpu: {{ .Values.frontend.resources.stable.limits.cpu }}
               memory: {{ .Values.frontend.resources.stable.limits.memory }}
+  strategy:
+    canary:
+      canaryService: frontend-canary-service
+      stableService: frontend-service
+      trafficRouting:
+        nginx:
+          stableIngress: pern-ingress
+
+      steps:
+        - setWeight: 20
+        - pause: { duration: 30s }
+        - analysis:
+            templates:
+              - templateName: frontend-auto-rollback
+
+        - setWeight: 50
+        - pause: { duration: 60s }
+        - analysis:
+            templates:
+              - templateName: frontend-auto-rollback
+
+        - setWeight: 80
+        - pause: { duration: 60s }
+        - analysis:
+            templates:
+              - templateName: frontend-auto-rollback
+
+        - setWeight: 100
+        - analysis:
+            templates:
+              - templateName: frontend-auto-rollback
+
 
