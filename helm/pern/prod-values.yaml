@@ -1,13 +1,9 @@
 namespace: pern-prod
 
 backend:
-  name: backend
+  name: backend-rollout
   replicaCount: 2
 
-  canary:
-    replicaCount: 2
-    name: backend-canary
-    tag: "3"
 
   image:
     repository: 407622020962.dkr.ecr.us-east-1.amazonaws.com/backend
@@ -22,15 +18,6 @@ backend:
       limits:
         cpu: "500m"
         memory: "512Mi"
-
-    canary:
-      requests:
-        cpu: "200m"
-        memory: "256Mi"
-      limits:
-        cpu: "500m"
-        memory: "512Mi"
-
   service:
     type: ClusterIP
     port: 5000 
@@ -48,13 +35,9 @@ backend:
     CLOUDINARY_API_SECRET: "eHgxSmsxSlhPSkVGUC02WlBkZG9OYi11VktF"
 
 frontend:
-  name: frontend
+  name: frontend-rollout
   replicaCount: 2
 
-  canary:
-    replicaCount: 2
-    name: frontend-canary
-    tag: "3"
 
   image:
     repository: 407622020962.dkr.ecr.us-east-1.amazonaws.com/frontend
@@ -64,14 +47,6 @@ frontend:
 
   resources:
     stable:
-      requests:
-        cpu: "100m"
-        memory: "128Mi"
-      limits:
-        cpu: "250m"
-        memory: "256Mi"
-
-    canary:
       requests:
         cpu: "100m"
         memory: "128Mi"

@@ -7,7 +7,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/Akashkayande/jenkins-eks-argocd.git
+    repoURL: https://github.com/Akashkayande/helm-argocd-eks.git
     targetRevision: main
     path: helm/pern
     helm:
